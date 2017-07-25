@@ -113,6 +113,8 @@ public class PeerClient implements Runnable{
 	private ArrayList pservers;
 	private Thread [] ptservers;
 
+	private ArrayList slist;
+	
 	private int id;
 	private String [] servers;
 
