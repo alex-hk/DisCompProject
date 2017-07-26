@@ -47,6 +47,8 @@ public class Peer implements Runnable{
 	public int getID(){return id;}
 	public String getAddress(){return address;}
 	public int getPort(){return port;}
+
+	// Deprecated, maybe
 	public Boolean getConnected(){return connected;}
 	public Boolean setConnected(){connected = true;}
 
