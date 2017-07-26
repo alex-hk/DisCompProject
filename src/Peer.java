@@ -5,6 +5,9 @@ import java.util.*;
 import java.io.*;
 
 public class Peer implements Runnable{
+	private String filename = "../setup.txt";
+	private ArrayList<String> fservers;
+
 	private Thread t;
 
 	private Socket[] peers;
@@ -12,13 +15,16 @@ public class Peer implements Runnable{
 	private ServerSocket serverSocket;
 	private Socket psock;
 
+	private PeerServer pserver;
+	private PeerClient pclient;
+
 
 	private int id;
 	private String address;
 	private int port;
 	private Boolean connected;
 	private String message;
-	private String [] messages;
+	private Queue<String> messages;
 
 	public Peers(String address, int port, int id, Boolean connected){
 		this.address = address;
@@ -28,16 +34,34 @@ public class Peer implements Runnable{
 	}
 
 	public void init(){
-		address = "localhost"
-			port = 5000 + (id-1);
-		serverSocket = new ServerSocket(port);
+		address = "localhost";
+		port = 5000 + (id-1);
+
+		readFromFile();
+		pserver = new PeerServer(address, port);
+		pclient = new PeerClient();
 	}
 
+
+	// GET SETS
 	public int getID(){return id;}
 	public String getAddress(){return address;}
 	public int getPort(){return port;}
 	public Boolean getConnected(){return connected;}
 	public Boolean setConnected(){connected = true;}
+
+	
+	// Reading servers from file
+	public void readFromFile(){
+		FileReader fread = new FileReader(filename);
+		BufferedReader bread = new BufferedReader(fread);
+		String line = null;
+
+		while((line = bread.readLine()) != null){
+			fservers.add(line);
+		}
+		bread.close();
+	}
 
 	public void connections(){
 		Thread tlisten = new Thread(plisten);
@@ -47,19 +71,21 @@ public class Peer implements Runnable{
 	}
 
 	public void plisten(){
-		try{
-			serverSocket = new ServerSocket(port);
-
+		try{	
+			pserver.listen();	
 		}
 	}
 
 	public void pconnect(){
-
+		try{
+			
+		}
 	}
 
 	public void run(){
-
 	}
+
+	
 
 	public static void main(String args[]){
 		if(args.length != 1){
@@ -69,6 +95,7 @@ public class Peer implements Runnable{
 		id = Integer.ParseInt(args[0]);
 		init();
 		connections();
+		run();
 	}
 
 }
@@ -93,14 +120,16 @@ public class PeerServer implement Runnable{
 	}
 
 	public void listen(){
-		while(pclients.size() < 9){
-			
+		try{
+			while(true){
+				
+			}	
 		}
 	}
 
 	public void run(){
 		while(true){
-			
+
 		}
 	}
 
@@ -110,24 +139,26 @@ public class PeerServer implement Runnable{
 }
 
 public class PeerClient implements Runnable{
-	private ArrayList pservers;
+	private ArrayList<Socket> pservers;
 	private Thread [] ptservers;
 
 	private ArrayList slist;
-	
+
 	private int id;
 	private String [] servers;
 
 	public Client(int id, String [] servers){
 		this.id = id;
 		this.servers = servers;
+		pservers = new ArrayList();
 	}
+	
 
-	public void joinPeers(){
+	public void joinPeers(ArrayList<String> peers){
 		
 	}
 
-	public void broadcast(){
+	public void broadcast(String message){
 		
 	}
-}
+}	
