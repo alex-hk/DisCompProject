@@ -39,7 +39,7 @@ public class Peer implements Runnable{
 	
 	fservers = new ArrayList<String>();
 	readFromFile();
-	pserver = new PeerServer(address, port);
+	pserver = new PeerServer(address, port, id);
 	pclient = new PeerClient(id, fservers);
     }
 

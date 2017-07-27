@@ -13,9 +13,11 @@ public class PeerServer implements Runnable{
 
     private ServerSocket pserver;
 
+    private int id;
     private boolean running = true;
 
-    public PeerServer(String address, int port){
+    public PeerServer(String address, int port, int id){
+	this.id = id;
 	this.address = address;
 	this.port = port;
 	pclients = new ArrayList<Socket>();
@@ -32,7 +34,7 @@ public class PeerServer implements Runnable{
     public void listenConnections(){
 	try{
 	    Socket pcsock = null;
-	    while(pclients.size() <= 9){
+	    while(pclients.size() < 9){
 		if((pcsock = pserver.accept()) != null){
 		    pclients.add(pcsock);
 		}
@@ -44,7 +46,7 @@ public class PeerServer implements Runnable{
 
     public void printClients(){
 	for(Socket psock : pclients){
-	    System.out.println("Socket with port: " + psock.getPort());
+	    System.out.println("Server " + id + ": Socket with port: " + psock.getLocalPort());
 	}
     }
 
@@ -55,8 +57,15 @@ public class PeerServer implements Runnable{
     }
 
     public void run(){	
-        startServer();
-	listenConnections();
+        try{
+	    startServer();
+	    listenConnections();
+	
+	    Thread.sleep(15000);
+	   // printClients();
+	} catch(InterruptedException ie){
+	    System.out.println("Stuff happened");
+	}
     }
 
     public void stopServer() throws IOException{

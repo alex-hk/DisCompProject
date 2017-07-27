@@ -36,15 +36,19 @@ public class PeerClient implements Runnable{
 	    Thread.sleep(1000*id);
 	    while(pservers.size() < 9){
 		if(count >= peers.size()) count = 0;
-		line = peers.get(count).split(" "); 
-		if(!idconnected.contains(line[0])){
-		    System.out.println("Attempting to join peer at port " + Integer.parseInt(line[2]) + "...");
-		    if((sock = new Socket(line[1], Integer.parseInt(line[2]))) != null){
-			pservers.add(new Socket(line[1], Integer.parseInt(line[2])));
-			count++;
-		    } else {
-			Thread.sleep(3000);
+		line = peers.get(count).split(" ");
+		if(Integer.parseInt(line[0]) != id){
+		    if(!idconnected.contains(line[0])){
+			System.out.println(id + " attempting to join peer at port " + Integer.parseInt(line[2]) + "...");
+			if((sock = new Socket(line[1], Integer.parseInt(line[2]))) != null){
+			    pservers.add(new Socket(line[1], Integer.parseInt(line[2])));
+			    count++;
+			} else {
+			    Thread.sleep(3000);
+			}
 		    }
+		}else{
+		    count++;
 		}
 	    }
 	} catch (IOException io){
@@ -60,10 +64,16 @@ public class PeerClient implements Runnable{
 	for(Socket peer : pservers){
 	    // TODO: send message
 	    // TODO: wait for response
+	    
 	}
     }
 
     public void run(){
-	joinPeers();
+	try{
+	    joinPeers();
+	    Thread.sleep(10000);
+	} catch (InterruptedException ex){
+	    System.out.println("InterruptionException run");   
+	}
     }
 }	
