@@ -71,9 +71,14 @@ public class PeerClient implements Runnable{
     public void run(){
 	try{
 	    joinPeers();
+	    
+	    System.out.println("Press any key to continue...");
+	    System.in.read();
 	    Thread.sleep(10000);
 	} catch (InterruptedException ex){
 	    System.out.println("InterruptionException run");   
+	} catch (IOException e){
+	    e.printStackTrace();
 	}
     }
 }	

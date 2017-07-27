@@ -1,7 +1,5 @@
 @echo off
 
-javac Peer.java
-
 start java Peer 1
 start java Peer 2
 start java Peer 3

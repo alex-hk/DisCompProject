@@ -61,10 +61,14 @@ public class PeerServer implements Runnable{
 	    startServer();
 	    listenConnections();
 	
+	    System.out.println("Press any key to continue...");
+	    System.in.read();
 	    Thread.sleep(15000);
 	   // printClients();
 	} catch(InterruptedException ie){
 	    System.out.println("Stuff happened");
+	} catch (IOException e){
+	    e.printStackTrace();
 	}
     }
 
