@@ -4,36 +4,36 @@ import java.io.*;
 
 import java.nio.*;
 
-public class Peer implements Runnable{
-    private static String filename = "../setup.txt";
-    private static ArrayList<String> fservers;
+public class Peer2 implements Runnable{
+    private  String filename = "../setup.txt";
+    private  ArrayList<String> fservers;
 
     private Thread t;
 
     private Socket[] peers;
 
-    private static ServerSocket serverSocket;
-    private static Socket psock;
+    private  ServerSocket serverSocket;
+    private  Socket psock;
 
-    private static PeerServer pserver;
-    private static PeerClient pclient;
+    private  PeerServer pserver;
+    private  PeerClient pclient;
 
 
-    private static int id;
-    private static String address;
-    private static int port;
+    private  int id;
+    private  String address;
+    private  int port;
     private Boolean connected;
     private String message;
     private Queue<String> messages;
 
-    public Peer(String address, int port, int id, Boolean connected){
+    public Peer2(String address, int port, int id, Boolean connected){
 	this.address = address;
 	this.port = port;
 	this.id = id;
 	this.connected = connected;
     }
 
-    public static void init(){
+    public  void init(){
 	address = "localhost";
 	port = 5000 + (id-1);
 	
@@ -55,7 +55,7 @@ public class Peer implements Runnable{
 
 
     // Reading servers from file
-    public static void readFromFile(){
+    public  void readFromFile(){
 	try{
 	    FileReader fread = new FileReader(filename);
 	    BufferedReader bread = new BufferedReader(fread);
@@ -73,7 +73,7 @@ public class Peer implements Runnable{
     }
 
     // Connecting to peers
-    public static void connections(){
+    public  void connections(){
 	Thread tclient = new Thread(pclient);
 	Thread tserver = new Thread(pserver);
 	
@@ -91,15 +91,14 @@ public class Peer implements Runnable{
     public void pconnect(){
     }
 
-    
     @Override
     public void run(){
 	init();
 	connections();
     }
-    
 
-    
+
+    /*
     public static void main(String args[]){
 	if(args.length != 1){
 	    System.out.println("Invalid number of arguments");
@@ -109,5 +108,5 @@ public class Peer implements Runnable{
 	init();
 	connections();
     }
-    
+    */
 }

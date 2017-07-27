@@ -62,6 +62,7 @@ public class PeerClient implements Runnable{
 	}
     }
 
+
     public void sendMessages(){
 	try{
 	    int n = 0;
@@ -81,7 +82,7 @@ public class PeerClient implements Runnable{
 	try{
 	    for(Socket peer : pservers){
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(peer.getOutputStream()));
-		System.out.println("Sending message: " + message);
+		System.out.println("Sending message: " + message + " | to socket " + peer.getPort());
 		bw.write(message);
 		bw.newLine();
 		bw.flush();
@@ -94,7 +95,10 @@ public class PeerClient implements Runnable{
     public void run(){
 	try{
 	    joinPeers();
-	    Thread.sleep(15000);
+	    Thread.sleep(15000 - (id*1000));
+	    System.out.println("Pservers length for process " + id + " is " + pservers.size());
+
+
 	    sendMessages();
 	} catch (InterruptedException ex){
 	    System.out.println("InterruptionException run");   

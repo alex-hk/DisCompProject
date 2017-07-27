@@ -49,7 +49,7 @@ public class PeerServer implements Runnable{
 
     public void printClients(){
 	for(Socket psock : pclients){
-	    System.out.println("Server " + id + ": Socket with port: " + psock.getLocalPort());
+	    System.out.println("Server " + id + ": Socket on port: " + psock.getLocalPort());
 	}
     }
 
@@ -78,12 +78,16 @@ public class PeerServer implements Runnable{
         try{
 	    startServer();
 	    listenConnections();
-
-	    Thread.sleep(15000);
+	    Thread.sleep(13000 - (id*1000));
 
 	    setupReceive();
+	    System.out.println("Socket length for process " + id + " is " + pclients.size());
+	    System.out.println("Thread length for process " + id + " is " + ptclients.size());
+	    System.out.println("ReceiveClient length for process " + id + " is " + rcs.size());
+
+
 	    listen();
-	    Thread.sleep(100000);
+	    Thread.sleep(50000);
 	    storeMessages();
 	    
 	    // printClients();
