@@ -1,166 +1,106 @@
-package p2p.project;
+package p2p;
 
 import java.net.*;
 import java.util.*;
 import java.io.*;
 
+import java.nio.*;
+
+import p2p.PeerServer;
+import p2p.PeerClient;
+
 public class Peer implements Runnable{
-	private String filename = "../setup.txt";
-	private ArrayList<String> fservers;
+    private String filename = "../setup.txt";
+    private ArrayList<String> fservers;
 
-	private Thread t;
+    private Thread t;
 
-	private Socket[] peers;
+    private Socket[] peers;
 
-	private ServerSocket serverSocket;
-	private Socket psock;
+    private ServerSocket serverSocket;
+    private Socket psock;
 
-	private PeerServer pserver;
-	private PeerClient pclient;
+    private PeerServer pserver;
+    private PeerClient pclient;
 
 
-	private int id;
-	private String address;
-	private int port;
-	private Boolean connected;
-	private String message;
-	private Queue<String> messages;
+    private int id;
+    private String address;
+    private int port;
+    private Boolean connected;
+    private String message;
+    private Queue<String> messages;
 
-	public Peers(String address, int port, int id, Boolean connected){
-		this.address = address;
-		this.port = port;
-		this.id = id;
-		this.connected = connected;
+    public Peer(String address, int port, int id, Boolean connected){
+	this.address = address;
+	this.port = port;
+	this.id = id;
+	this.connected = connected;
+    }
+
+    public void init(){
+	address = "localhost";
+	port = 5000 + (id-1);
+
+	readFromFile();
+	pserver = new PeerServer(address, port);
+	pclient = new PeerClient(this.id);
+    }
+
+
+    // GET SETS
+    public int getID(){return id;}
+    public String getAddress(){return address;}
+    public int getPort(){return port;}
+
+    // Deprecated, maybe
+    public Boolean getConnected(){return connected;}
+    public Boolean setConnected(){connected = true;}
+
+
+    // Reading servers from file
+    public void readFromFile(){
+	FileReader fread = new FileReader(filename);
+	BufferedReader bread = new BufferedReader(fread);
+	String line = null;
+
+	while((line = bread.readLine()) != null){
+	    fservers.add(line);
 	}
+	bread.close();
+    }
 
-	public void init(){
-		address = "localhost";
-		port = 5000 + (id-1);
+    // Connecting to peers
+    public void connections(){
+	Thread tlisten = new Thread(this,plisten);
+	Thread tconnect = new Thread(this,pconnect);
+	tlisten.start();
+	tconnect.start();
+    }
 
-		readFromFile();
-		pserver = new PeerServer(address, port);
-		pclient = new PeerClient();
+    // Listening for peers to connect
+    public void plisten(){
+	pserver.listen();
+    }
+
+    // Connecting to peers
+    public void pconnect(){
+	pclient.connect();
+    }
+
+    public void run(){
+    }
+
+
+
+    public static void main(String args[]){
+	if(args.length != 1){
+	    System.out.println("Invalid number of arguments");
+	    System.exit();
 	}
-
-
-	// GET SETS
-	public int getID(){return id;}
-	public String getAddress(){return address;}
-	public int getPort(){return port;}
-
-	// Deprecated, maybe
-	public Boolean getConnected(){return connected;}
-	public Boolean setConnected(){connected = true;}
-
-	
-	// Reading servers from file
-	public void readFromFile(){
-		FileReader fread = new FileReader(filename);
-		BufferedReader bread = new BufferedReader(fread);
-		String line = null;
-
-		while((line = bread.readLine()) != null){
-			fservers.add(line);
-		}
-		bread.close();
-	}
-
-	public void connections(){
-		Thread tlisten = new Thread(plisten);
-		Thread tconnect = new Thread(pconnect);
-		tlisten.start();
-		tconnect.start();
-	}
-
-	public void plisten(){
-		try{	
-			pserver.listen();	
-		}
-	}
-
-	public void pconnect(){
-		try{
-			
-		}
-	}
-
-	public void run(){
-	}
-
-	
-
-	public static void main(String args[]){
-		if(args.length != 1){
-			System.out.println("Invalid number of arguments");
-			System.exit();
-		}
-		id = Integer.ParseInt(args[0]);
-		init();
-		connections();
-		run();
-	}
-
+	id = Integer.ParseInt(args[0]);
+	init();
+	connections();
+	run();
+    }
 }
-
-public class PeerServer implement Runnable{
-	private ArrayList pclients;
-	private Thread [] ptclients;
-
-	private String address;
-	private int port;
-
-	private ServerSocket pserver;
-
-	public PeerServer(String address, int port){
-		this.address = address;
-		this.port = port;
-		pclients = new ArrayList();
-	}
-
-	public void startServer(){
-		pserver = new ServerSocket(port);	
-	}
-
-	public void listen(){
-		try{
-			while(true){
-				
-			}	
-		}
-	}
-
-	public void run(){
-		while(true){
-
-		}
-	}
-
-	public void stopServer(){
-		pserver.close();
-	}
-}
-
-public class PeerClient implements Runnable{
-	private ArrayList<Socket> pservers;
-	private Thread [] ptservers;
-
-	private ArrayList slist;
-
-	private int id;
-	private String [] servers;
-
-	public Client(int id, String [] servers){
-		this.id = id;
-		this.servers = servers;
-		pservers = new ArrayList();
-	}
-	
-
-	public void joinPeers(ArrayList<String> peers){
-		
-	}
-
-	public void broadcast(String message){
-		
-	}
-}	
