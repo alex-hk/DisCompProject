@@ -1,32 +1,27 @@
-package p2p;
-
 import java.net.*;
 import java.util.*;
 import java.io.*;
 
 import java.nio.*;
 
-import p2p.PeerServer;
-import p2p.PeerClient;
-
 public class Peer implements Runnable{
-    private String filename = "../setup.txt";
-    private ArrayList<String> fservers;
+    private static String filename = "../setup.txt";
+    private static ArrayList<String> fservers;
 
     private Thread t;
 
     private Socket[] peers;
 
-    private ServerSocket serverSocket;
-    private Socket psock;
+    private static ServerSocket serverSocket;
+    private static Socket psock;
 
-    private PeerServer pserver;
-    private PeerClient pclient;
+    private static PeerServer pserver;
+    private static PeerClient pclient;
 
 
-    private int id;
-    private String address;
-    private int port;
+    private static int id;
+    private static String address;
+    private static int port;
     private Boolean connected;
     private String message;
     private Queue<String> messages;
@@ -38,13 +33,14 @@ public class Peer implements Runnable{
 	this.connected = connected;
     }
 
-    public void init(){
+    public static void init(){
 	address = "localhost";
 	port = 5000 + (id-1);
-
+	
+	fservers = new ArrayList<String>();
 	readFromFile();
 	pserver = new PeerServer(address, port);
-	pclient = new PeerClient(this.id);
+	pclient = new PeerClient(id, fservers);
     }
 
 
@@ -55,39 +51,47 @@ public class Peer implements Runnable{
 
     // Deprecated, maybe
     public Boolean getConnected(){return connected;}
-    public Boolean setConnected(){connected = true;}
+    public void setConnected(){connected = true;}
 
 
     // Reading servers from file
-    public void readFromFile(){
-	FileReader fread = new FileReader(filename);
-	BufferedReader bread = new BufferedReader(fread);
-	String line = null;
+    public static void readFromFile(){
+	try{
+	    FileReader fread = new FileReader(filename);
+	    BufferedReader bread = new BufferedReader(fread);
+	    String line = null;
 
-	while((line = bread.readLine()) != null){
-	    fservers.add(line);
+	    while((line = bread.readLine()) != null){
+		fservers.add(line);
+	    }
+	    bread.close();
+	} catch(FileNotFoundException fnfe) {
+	    System.out.println("File not found");
+	} catch(IOException ioe){
+	    System.out.println("IOException");
 	}
-	bread.close();
     }
 
     // Connecting to peers
-    public void connections(){
-	Thread tlisten = new Thread(this,plisten);
-	Thread tconnect = new Thread(this,pconnect);
-	tlisten.start();
-	tconnect.start();
+    public static void connections(){
+	Thread tclient = new Thread(pclient);
+	Thread tserver = new Thread(pserver);
+	
+	tclient.setName("Client Thread id: " + id);
+	tserver.setName("Server Thread id: " + id);
+	tclient.start();
+	tserver.start();
     }
 
     // Listening for peers to connect
     public void plisten(){
-	pserver.listen();
     }
 
     // Connecting to peers
     public void pconnect(){
-	pclient.connect();
     }
 
+    @Override
     public void run(){
     }
 
@@ -96,11 +100,10 @@ public class Peer implements Runnable{
     public static void main(String args[]){
 	if(args.length != 1){
 	    System.out.println("Invalid number of arguments");
-	    System.exit();
+	    System.exit(1);
 	}
-	id = Integer.ParseInt(args[0]);
+	id = Integer.parseInt(args[0]);
 	init();
 	connections();
-	run();
     }
 }

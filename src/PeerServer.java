@@ -1,5 +1,3 @@
-package p2p;
-
 import java.net.*;
 import java.util.*;
 import java.io.*;
@@ -20,19 +18,27 @@ public class PeerServer implements Runnable{
     public PeerServer(String address, int port){
 	this.address = address;
 	this.port = port;
-	pclients = new ArrayList();
+	pclients = new ArrayList<Socket>();
     }
 
     public void startServer(){
-	pserver = new ServerSocket(port);	
+	try{
+	    pserver = new ServerSocket(port);
+	} catch (IOException e){
+	    System.out.println("IOException startServer");
+	}
     }
 
     public void listenConnections(){
-	Socket pcsock;
-	while(pclients.size() < 9){
-	    if((pcsock = pserver.accept()) != null){
-		pclients.add(pcsock);
+	try{
+	    Socket pcsock = null;
+	    while(pclients.size() <= 9){
+		if((pcsock = pserver.accept()) != null){
+		    pclients.add(pcsock);
+		}
 	    }
+	} catch (IOException e){
+	    System.out.println("IOException in listenConnections");
 	}
     }
 
@@ -48,13 +54,12 @@ public class PeerServer implements Runnable{
 	}	
     }
 
-    public void run(){
-	while(true){
-
-	}
+    public void run(){	
+        startServer();
+	listenConnections();
     }
 
-    public void stopServer(){
+    public void stopServer() throws IOException{
 	pserver.close();
     }
 }
