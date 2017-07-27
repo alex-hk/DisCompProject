@@ -1,5 +1,6 @@
 #!/bin/bash
 
+javac Peer.java
 java Peer 1 &
 java Peer 2 &
 java Peer 3 &

@@ -79,8 +79,8 @@ public class Peer implements Runnable{
 	
 	tclient.setName("Client Thread id: " + id);
 	tserver.setName("Server Thread id: " + id);
+	tserver.start();	
 	tclient.start();
-	tserver.start();
     }
 
     // Listening for peers to connect
