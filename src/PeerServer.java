@@ -9,6 +9,7 @@ public class PeerServer implements Runnable{
     private ArrayList<Thread> ptclients;
     private ArrayList<ReceiveClient> rcs;
 
+    private int numPeers = 3;
     private String address;
     private int port;
 
@@ -37,7 +38,7 @@ public class PeerServer implements Runnable{
     public void listenConnections(){
 	try{
 	    Socket pcsock = null;
-	    while(pclients.size() < 9){
+	    while(pclients.size() < numPeers){
 		if((pcsock = pserver.accept()) != null){
 		    pclients.add(pcsock);
 		}
@@ -59,6 +60,12 @@ public class PeerServer implements Runnable{
 	}
 	for(ReceiveClient rc : rcs){
 	    ptclients.add(new Thread(rc));
+	}
+    }
+
+    public void listen3(){
+	while(true){
+	    
 	}
     }
 
@@ -99,9 +106,8 @@ public class PeerServer implements Runnable{
 
 
 	    listen2();
-	    Thread.sleep(50000);
+	    Thread.sleep(100000);
 	    storeMessages();
-	    
 	    // printClients();
 	} catch(InterruptedException ie){
 	    System.out.println("Stuff happened");

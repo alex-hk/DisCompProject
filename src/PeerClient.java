@@ -8,7 +8,8 @@ import java.nio.*;
 public class PeerClient implements Runnable{
     private ArrayList<Socket> pservers;
     private Thread [] ptservers;
-
+    
+    private int numPeers = 3;
     private String message;
 
     private ArrayList<String> peers;
@@ -36,14 +37,15 @@ public class PeerClient implements Runnable{
 	    int count = 0;
 	    idconnected.add(this.id);
 	    Thread.sleep(1000*id);
-	    while(pservers.size() < 9){
-		if(count >= peers.size()) count = 0;
+	    while(pservers.size() < numPeers){
+		if(count > numPeers) count = 0;
 		line = peers.get(count).split(" ");
 		if(Integer.parseInt(line[0]) != id){
 		    if(!idconnected.contains(line[0])){
 			System.out.println(id + " attempting to join peer at port " + Integer.parseInt(line[2]) + "...");
-			if((sock = new Socket(line[1], Integer.parseInt(line[2]))) != null){
-			    pservers.add(new Socket(line[1], Integer.parseInt(line[2])));
+			if((sock = new Socket("localhost", Integer.parseInt(line[2]))) != null){
+			    pservers.add(new Socket("localhost", Integer.parseInt(line[2])));
+			    idconnected.add(Integer.parseInt(line[0]));
 			    count++;
 			} else {
 			    Thread.sleep(3000);
@@ -81,11 +83,9 @@ public class PeerClient implements Runnable{
     public void broadcast(String message){
 	try{
 	    for(Socket peer : pservers){
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(peer.getOutputStream()));
-		System.out.println("Sending message: " + message + " | to socket " + peer.getPort() + " with BufferedWriter " + bw.toString());
-		bw.write(message);
-		bw.newLine();
-		bw.flush();
+		PrintWriter out = new PrintWriter(peer.getOutputStream(), true);
+		System.out.println("Sending message: " + message + " | to socket " + peer.getPort());
+		out.println(message);
 	    }
 	} catch (IOException e){
 	    e.printStackTrace();
@@ -95,7 +95,7 @@ public class PeerClient implements Runnable{
     public void run(){
 	try{
 	    joinPeers();
-	    Thread.sleep(15000 - (id*1000));
+	    Thread.sleep(((numPeers*1000)+5000) - (id*1000));
 	    System.out.println("Pservers length for process " + id + " is " + pservers.size());
 
 
