@@ -62,6 +62,18 @@ public class PeerServer implements Runnable{
 	}
     }
 
+    public void listen2(){
+	try{
+	    for(Socket s : pclients){
+		ReceiveClient rc = new ReceiveClient(id, s);
+		Thread pthread = new Thread(rc);
+		pthread.start();
+	    }
+	} catch (Exception ex){
+	    ex.printStackTrace();
+	}
+    }
+
     public void listen(){
 	for(Thread t : ptclients){
 	    t.start();
@@ -86,7 +98,7 @@ public class PeerServer implements Runnable{
 	    System.out.println("ReceiveClient length for process " + id + " is " + rcs.size());
 
 
-	    listen();
+	    listen2();
 	    Thread.sleep(50000);
 	    storeMessages();
 	    

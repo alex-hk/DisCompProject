@@ -42,9 +42,10 @@ public class ReceiveClient implements Runnable{
 	try{
 	    BufferedReader br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 	    while(((f1 = System.nanoTime() - f0) / 1000000000.0) < 100.0){
-		message = br.readLine() + "\n";
-		System.out.println("Message received: " + message);
-		messages.add(message);
+		if((message = br.readLine())!= null){
+		    System.out.println("Message received: " + message);
+		    messages.add(message);
+		}
 	    }
 	} catch (IOException e){
 	    e.printStackTrace();

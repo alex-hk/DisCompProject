@@ -82,7 +82,7 @@ public class PeerClient implements Runnable{
 	try{
 	    for(Socket peer : pservers){
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(peer.getOutputStream()));
-		System.out.println("Sending message: " + message + " | to socket " + peer.getPort());
+		System.out.println("Sending message: " + message + " | to socket " + peer.getPort() + " with BufferedWriter " + bw.toString());
 		bw.write(message);
 		bw.newLine();
 		bw.flush();
