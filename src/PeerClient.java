@@ -9,6 +9,8 @@ public class PeerClient implements Runnable{
     private ArrayList<Socket> pservers;
     private Thread [] ptservers;
 
+    private String message;
+
     private ArrayList<String> peers;
 
     private Socket clientsock;
@@ -60,25 +62,42 @@ public class PeerClient implements Runnable{
 	}
     }
 
+    public void sendMessages(){
+	try{
+	    int n = 0;
+	    message = id + ": hello others";
+	    while(n++ < 30){
+		Random rand = new Random();
+		double d = rand.nextDouble();
+		if(d >= 0.5) broadcast(message);
+		Thread.sleep(3000);
+	    }
+	}catch(InterruptedException ie){
+	    ie.printStackTrace();
+	}
+    }
+
     public void broadcast(String message){
-	for(Socket peer : pservers){
-	    // TODO: send message
-	    // TODO: wait for response
-	    
+	try{
+	    for(Socket peer : pservers){
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(peer.getOutputStream()));
+		System.out.println("Sending message: " + message);
+		bw.write(message);
+		bw.newLine();
+		bw.flush();
+	    }
+	} catch (IOException e){
+	    e.printStackTrace();
 	}
     }
 
     public void run(){
 	try{
 	    joinPeers();
-	    
-	    System.out.println("Press any key to continue...");
-	    System.in.read();
-	    Thread.sleep(10000);
+	    Thread.sleep(15000);
+	    sendMessages();
 	} catch (InterruptedException ex){
 	    System.out.println("InterruptionException run");   
-	} catch (IOException e){
-	    e.printStackTrace();
 	}
     }
 }	
